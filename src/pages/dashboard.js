@@ -27,10 +27,13 @@ export function renderDashboard(container) {
 
     <div class="dashboard-grid">
       <!-- AI Insights Card -->
-      <div class="card ai-card">
+      <div class="card ai-card ${insights[0]?.type === 'danger' ? 'danger' : ''}">
         <div class="ai-card-content">
-          <div class="ai-card-label">🤖 Asistente IA</div>
-          <div class="ai-card-text" id="ai-realtime-text">
+          <div class="ai-card-label ${insights[0]?.type === 'danger' ? 'blink-red' : ''}">
+            🤖 Asistente IA 
+            ${insights[0]?.type === 'danger' ? '<span class="alert-dot blink-red"></span>' : ''}
+          </div>
+          <div class="ai-card-text" id="ai-realtime-text" style="${insights[0]?.type === 'danger' ? 'font-weight:700;color:var(--accent-red)' : ''}">
             ${insights[0] ? insights[0].message : 'Análisis automático de tus finanzas.'}
           </div>
           <div class="ai-card-btn" id="btn-show-insights">

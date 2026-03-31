@@ -1266,3 +1266,30 @@ a {
 ::-webkit-scrollbar-thumb:hover {
   background: var(--text-muted);
 }
+
+/* AI Alert Dot */
+.alert-dot {
+  display: inline-block;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  margin-right: 8px;
+  background-color: var(--accent-red);
+  box-shadow: 0 0 8px var(--accent-red);
+}
+
+.blink-red {
+  animation: blink-animation 1s steps(5, start) infinite;
+}
+
+@keyframes blink-animation {
+  to {
+    visibility: hidden;
+  }
+}
+
+.ai-card.danger {
+  border-color: var(--accent-red);
+  background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(108, 92, 231, 0.05) 100%);
+}
+
