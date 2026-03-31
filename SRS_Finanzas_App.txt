@@ -1,0 +1,77 @@
+SRS / PROMPT ESTRUCTURADO PARA IA
+Aplicación de Gestión Financiera Personal y Familiar
+
+1. DEFINICIÓN DEL PROBLEMA
+Construir una aplicación web moderna que permita gestionar ingresos variables y gastos del hogar, con foco en control financiero, análisis automático, detección de anomalías y toma de decisiones basada en datos.
+
+2. OBJETIVOS
+- Controlar ingresos variables de múltiples clientes
+- Gestionar gastos fijos y variables
+- Definir y monitorear presupuestos
+- Detectar desviaciones automáticamente
+- Proveer visualizaciones claras
+
+3. USUARIOS
+- Usuario familiar
+- Grupo familiar
+
+4. ENTIDADES
+Movimientos: id, tipo, monto, fecha, categoria_id, cuenta_id, descripcion, usuario_id
+Categorías: id, nombre, tipo, color
+Presupuestos: id, categoria_id, monto_mensual, usuario_id
+Ingresos Recurrentes: id, cliente, monto_estimado, frecuencia, activo
+Cuentas: id, nombre, saldo_actual
+
+5. FUNCIONALIDADES
+- Registro manual de ingresos y gastos
+- Gestión de ingresos variables
+- Clasificación de gastos
+- Presupuestos por categoría
+- Dashboard visual
+
+6. MOTOR DE ANÁLISIS
+- Detectar aumento de gasto
+- Detectar exceso de presupuesto
+- Detectar crecimiento sostenido
+- Detectar gastos inusuales
+- Generar insights automáticos
+
+7. PROYECCIONES
+- Proyección de ingresos
+- Proyección de gastos
+- Balance proyectado
+
+8. REGLAS DE NEGOCIO
+- Todo movimiento tiene categoría
+- Valores positivos
+- Alertas por exceso
+- Recalculo automático
+
+9. INTERFAZ
+- Diseño moderno
+- Mobile-first
+- Dashboard con gráficos
+
+10. NO FUNCIONALES
+- Performance < 2s
+- Seguridad
+- Escalabilidad
+- Usabilidad
+
+11. ARQUITECTURA
+- Frontend web
+- Backend Supabase
+- PostgreSQL
+- Supabase Auth
+
+12. OUTPUT IA
+- Base de datos SQL
+- UI funcional
+- Lógica implementada
+- Dashboard
+
+13. DIFERENCIAL
+Sistema inteligente con análisis automático y recomendaciones.
+
+14. PROMPT FINAL
+Construir una aplicación web de gestión financiera personal con análisis automático, presupuestos, dashboard visual y detección de anomalías.
