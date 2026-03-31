@@ -7,6 +7,7 @@ import { renderPresupuestos } from './pages/presupuestos.js';
 import { renderCategorias } from './pages/categorias.js';
 import { renderCuentas } from './pages/cuentas.js';
 import { renderProyecciones } from './pages/proyecciones.js';
+import { renderSimulador } from './pages/simulador.js';
 
 const app = document.getElementById('app');
 const router = new Router();
@@ -44,6 +45,7 @@ function renderSidebar(active) {
     { hash: '/categorias', icon: '🏷️', label: 'Categorías' },
     { hash: '/cuentas', icon: '🏦', label: 'Cuentas' },
     { hash: '/proyecciones', icon: '🔮', label: 'Proyecciones' },
+    { hash: '/simulador', icon: '🧮', label: 'Simulador' },
   ];
   return `
     <aside class="sidebar">
@@ -91,7 +93,8 @@ router
   .on('/presupuestos', () => guardAuth('/presupuestos', renderPresupuestos))
   .on('/categorias', () => guardAuth('/categorias', renderCategorias))
   .on('/cuentas', () => guardAuth('/cuentas', renderCuentas))
-  .on('/proyecciones', () => guardAuth('/proyecciones', renderProyecciones));
+  .on('/proyecciones', () => guardAuth('/proyecciones', renderProyecciones))
+  .on('/simulador', () => guardAuth('/simulador', renderSimulador));
 
 // Init
 supabase.auth.getSession().then(({ data: { session } }) => {
