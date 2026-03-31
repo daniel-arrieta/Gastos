@@ -57,7 +57,9 @@ export function renderProyecciones(container) {
       <div class="card-header">
         <span class="card-title"><span class="icon" style="background:var(--bg-badge);color:var(--primary)">📈</span> Tendencia de 6 meses + Proyección</span>
       </div>
-      <canvas id="projection-chart" height="300"></canvas>
+      <div class="chart-container" style="height:250px;margin-bottom:12px">
+        <canvas id="projection-chart"></canvas>
+      </div>
     </div>`;
 
   // Render chart
