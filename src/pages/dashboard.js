@@ -43,7 +43,7 @@ export function renderDashboard(container) {
           <span class="card-title"><span class="icon" style="background:var(--bg-badge);color:var(--primary)">📊</span> Gastos Semanales</span>
           <select class="filter-select" id="chart-period"><option>Semana</option></select>
         </div>
-        <div class="chart-container" style="height:40px;margin-bottom:8px">
+        <div class="chart-container" style="height:100px;margin-bottom:12px">
           <canvas id="weekly-chart"></canvas>
         </div>
       </div>
