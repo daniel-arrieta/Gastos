@@ -1,6 +1,6 @@
 import { state } from '../main.js';
 import { formatMoney, formatDate } from '../lib/utils.js';
-import { generateInsights, getMonthlySummary, getWeeklySpending, getDailySpending, getMonthlySpending, getSpendingByCategory } from '../lib/analysis.js';
+import { generateInsights, getMonthlySummary, getWeeklySpending, getDailySpending, getMonthlySpending, getSpendingByCategory, getCollectionSummary } from '../lib/analysis.js';
 
 export function renderDashboard(container) {
   const summary = getMonthlySummary(state.movements);
@@ -8,6 +8,7 @@ export function renderDashboard(container) {
   const byCategory = getSpendingByCategory(state.movements, state.categories);
   const insights = generateInsights(state.movements, state.budgets, state.categories);
   const recentMovements = state.movements.slice(0, 5);
+  const collections = getCollectionSummary(state.movements, state.recurringIncome);
 
   const incBadge = summary.incomeChange >= 0
     ? `<span class="kpi-badge up">▲ ${summary.incomeChange.toFixed(0)}%</span>`
@@ -57,17 +58,33 @@ export function renderDashboard(container) {
         <div class="card-header">
           <span class="card-title">Resumen del Mes</span>
         </div>
-        <div style="margin-bottom:20px">
-          <div style="font-size:0.78rem;color:var(--text-muted)">Ingresos ${incBadge}</div>
-          <div class="kpi-value" style="color:var(--accent-green)">${formatMoney(summary.income)}</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:0.75rem;color:var(--text-muted)">Ingresos ${incBadge}</div>
+          <div class="kpi-value" style="color:var(--accent-green);font-size:1.4rem">${formatMoney(summary.income)}</div>
         </div>
-        <div>
-          <div style="font-size:0.78rem;color:var(--text-muted)">Gastos ${expBadge}</div>
-          <div class="kpi-value" style="color:var(--accent-red)">${formatMoney(summary.expenses)}</div>
+        <div style="margin-bottom:12px">
+          <div style="font-size:0.75rem;color:var(--text-muted)">Gastos ${expBadge}</div>
+          <div class="kpi-value" style="color:var(--accent-red);font-size:1.4rem">${formatMoney(summary.expenses)}</div>
         </div>
+        
+        <!-- Collections Mini-panel -->
         <div style="margin-top:16px;padding-top:16px;border-top:1px solid var(--border-light)">
-          <div style="font-size:0.78rem;color:var(--text-muted)">Balance</div>
-          <div class="kpi-value" style="color:${summary.balance >= 0 ? 'var(--accent-green)' : 'var(--accent-red)'}">${formatMoney(summary.balance)}</div>
+          <div class="card-title" style="font-size:0.8rem;margin-bottom:8px">
+            <span class="icon" style="width:20px;height:20px;font-size:0.7rem;background:rgba(108,92,231,0.1);color:var(--primary)">💼</span>
+            Cobranza
+          </div>
+          <div class="progress-container" style="margin-bottom:4px">
+            <div class="progress-header">
+              <span class="progress-label" style="font-size:0.7rem">Progreso</span>
+              <span class="progress-pct" style="font-size:0.7rem;color:var(--primary)">${collections.pct.toFixed(0)}%</span>
+            </div>
+            <div class="progress-bar" style="height:6px">
+              <div class="progress-fill" style="width:${collections.pct}%;background:var(--primary)"></div>
+            </div>
+          </div>
+          <div style="font-size:0.68rem;color:var(--text-muted)">
+            ${formatMoney(collections.collected)} de ${formatMoney(collections.expected)}
+          </div>
         </div>
       </div>
     </div>

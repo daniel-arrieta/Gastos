@@ -391,3 +391,31 @@ export function getMonthlySummary(movements) {
     expenseChange
   };
 }
+/**
+ * Get collection summary (Expected vs Collected)
+ */
+export function getCollectionSummary(movements, clients) {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const totalExpected = (clients || []).reduce((sum, c) => sum + Number(c.monto_estimado), 0);
+  
+  const totalCollected = (clients || []).reduce((sum, c) => {
+    const collected = movements
+      .filter(m => 
+        m.tipo === 'ingreso' && 
+        new Date(m.fecha).getMonth() === currentMonth && 
+        new Date(m.fecha).getFullYear() === currentYear &&
+        m.descripcion?.toLowerCase().includes(c.cliente.toLowerCase())
+      )
+      .reduce((s, m) => s + Number(m.monto), 0);
+    return sum + collected;
+  }, 0);
+
+  return {
+    expected: totalExpected,
+    collected: totalCollected,
+    pct: totalExpected > 0 ? (totalCollected / totalExpected * 100) : 0
+  };
+}
