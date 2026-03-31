@@ -161,6 +161,41 @@ export function detectUnusualExpenses(movements) {
 }
 
 /**
+ * Detect deficit: expenses > income
+ */
+export function detectDeficit(movements) {
+  const now = new Date();
+  const currentMonth = now.getMonth();
+  const currentYear = now.getFullYear();
+
+  const income = movements
+    .filter(m => m.tipo === 'ingreso' && new Date(m.fecha).getMonth() === currentMonth && new Date(m.fecha).getFullYear() === currentYear)
+    .reduce((sum, m) => sum + Number(m.monto), 0);
+
+  const expenses = movements
+    .filter(m => m.tipo === 'gasto' && new Date(m.fecha).getMonth() === currentMonth && new Date(m.fecha).getFullYear() === currentYear)
+    .reduce((sum, m) => sum + Number(m.monto), 0);
+
+  if (expenses > income && income > 0) {
+    return {
+      type: 'danger',
+      icon: '🚨',
+      message: `¡Cuidado! Tus gastos de este mes ($${expenses.toFixed(0)}) están superando a tus ingresos ($${income.toFixed(0)}). Estás en <strong>déficit</strong>.`
+    };
+  }
+  
+  if (income > 0 && expenses > (income * 0.85)) {
+    return {
+      type: 'warning',
+      icon: '⚠️',
+      message: `Tus gastos representan el <strong>${((expenses/income)*100).toFixed(0)}%</strong> de tus ingresos. Estás muy cerca de tu límite mensual.`
+    };
+  }
+
+  return null;
+}
+
+/**
  * Generate all insights
  */
 export function generateInsights(movements, budgets, categories) {
@@ -177,6 +212,10 @@ export function generateInsights(movements, budgets, categories) {
 
   const unusualExpenses = detectUnusualExpenses(movements);
   insights.push(...unusualExpenses);
+
+  const deficit = detectDeficit(movements);
+  if (deficit) insights.push(deficit);
+
 
   // If no issues detected, add a positive insight
   if (insights.length === 0) {
