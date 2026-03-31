@@ -43,7 +43,9 @@ export function renderDashboard(container) {
           <span class="card-title"><span class="icon" style="background:var(--bg-badge);color:var(--primary)">📊</span> Gastos Semanales</span>
           <select class="filter-select" id="chart-period"><option>Semana</option></select>
         </div>
-        <canvas id="weekly-chart" height="120"></canvas>
+        <div class="chart-container" style="height:40px;margin-bottom:8px">
+          <canvas id="weekly-chart"></canvas>
+        </div>
       </div>
 
       <!-- KPIs -->
@@ -94,11 +96,11 @@ export function renderDashboard(container) {
         <div class="card-header">
           <span class="card-title"><span class="icon" style="background:rgba(99,102,241,0.1);color:var(--primary)">🍩</span> Distribución</span>
         </div>
-        <div class="chart-container" style="height:180px;margin-bottom:12px">
+        <div class="chart-container" style="height:140px;margin-bottom:8px">
           <canvas id="donut-chart"></canvas>
           <div class="chart-center-label">
-            <div class="chart-center-value">${byCategory.length}</div>
-            <div class="chart-center-text">categorías</div>
+            <div class="chart-center-value" style="font-size:1.1rem">${byCategory.length}</div>
+            <div class="chart-center-text" style="font-size:0.65rem">categorías</div>
           </div>
         </div>
       </div>
@@ -200,7 +202,7 @@ function renderDonutChart(data) {
     options: {
       responsive: true,
       maintainAspectRatio: false,
-      cutout: '70%',
+      cutout: '60%',
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ctx.label + ': $' + ctx.raw.toLocaleString() } } }
     }
   });
