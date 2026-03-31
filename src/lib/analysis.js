@@ -216,14 +216,26 @@ export function generateInsights(movements, budgets, categories) {
   const deficit = detectDeficit(movements);
   if (deficit) insights.push(deficit);
 
+  // Sort: Danger > Warning > Success
+  const priorityOrder = { danger: 1, warning: 2, success: 3 };
+  insights.sort((a, b) => (priorityOrder[a.type] || 99) - (priorityOrder[b.type] || 99));
 
-  // If no issues detected, add a positive insight
+  // If no issues detected or to add a summary insight
   if (insights.length === 0) {
-    insights.push({
-      type: 'success',
-      icon: '✅',
-      message: '¡Todo bien! No se detectaron anomalías ni excesos en tus finanzas este mes.'
-    });
+    const summary = getMonthlySummary(movements);
+    if (summary.balance > 0) {
+      insights.unshift({
+        type: 'success',
+        icon: '💪',
+        message: `¡Excelente trabajo de ahorro! Tenés un saldo positivo de <strong>${summary.balance.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' })}</strong> este mes.`
+      });
+    } else {
+      insights.push({
+        type: 'success',
+        icon: '✅',
+        message: '¡Todo en orden! No se detectaron anomalías ni excesos en tus finanzas este mes.'
+      });
+    }
   }
 
   return insights;

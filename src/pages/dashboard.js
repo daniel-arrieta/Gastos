@@ -30,9 +30,11 @@ export function renderDashboard(container) {
       <div class="card ai-card">
         <div class="ai-card-content">
           <div class="ai-card-label">🤖 Asistente IA</div>
-          <div class="ai-card-text">Análisis automático de tus finanzas con detección de anomalías y recomendaciones personalizadas.</div>
+          <div class="ai-card-text" id="ai-realtime-text">
+            ${insights[0] ? insights[0].message : 'Análisis automático de tus finanzas.'}
+          </div>
           <div class="ai-card-btn" id="btn-show-insights">
-            Ver análisis completo
+            ${insights.length > 1 ? `Ver ${insights.length} análisis más` : 'Ver análisis completo'}
             <span class="arrow">→</span>
           </div>
         </div>
