@@ -1,6 +1,6 @@
 import { state } from '../main.js';
 import { formatMoney, formatDate } from '../lib/utils.js';
-import { generateInsights, getMonthlySummary, getWeeklySpending, getSpendingByCategory } from '../lib/analysis.js';
+import { generateInsights, getMonthlySummary, getWeeklySpending, getDailySpending, getMonthlySpending, getSpendingByCategory } from '../lib/analysis.js';
 
 export function renderDashboard(container) {
   const summary = getMonthlySummary(state.movements);
@@ -40,11 +40,15 @@ export function renderDashboard(container) {
       <!-- Weekly Chart -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title"><span class="icon" style="background:var(--bg-badge);color:var(--primary)">📊</span> Gastos Semanales</span>
-          <select class="filter-select" id="chart-period"><option>Semana</option></select>
+          <span class="card-title"><span class="icon" style="background:var(--bg-badge);color:var(--primary)">📊</span> Gastos</span>
+          <select class="filter-select" id="chart-period">
+            <option value="weekly">Semanal</option>
+            <option value="daily">Diario (30d)</option>
+            <option value="monthly">Mensual (12m)</option>
+          </select>
         </div>
         <div class="chart-container" style="height:300px;margin-bottom:12px">
-          <canvas id="weekly-chart"></canvas>
+          <canvas id="main-chart"></canvas>
         </div>
       </div>
 
@@ -150,18 +154,33 @@ export function renderDashboard(container) {
     if (e.target.id === 'insights-modal') e.target.style.display = 'none';
   });
 
-  // Render charts
-  renderWeeklyChart(weekly);
+  const chartSelect = document.getElementById('chart-period');
+  let mainChart = null;
+
+  function updateMainChart(period) {
+    let data = [];
+    if (period === 'weekly') data = getWeeklySpending(state.movements);
+    else if (period === 'daily') data = getDailySpending(state.movements);
+    else if (period === 'monthly') data = getMonthlySpending(state.movements);
+
+    if (mainChart) mainChart.destroy();
+    mainChart = renderMainChart(data, period);
+  }
+
+  chartSelect?.addEventListener('change', (e) => updateMainChart(e.target.value));
+
+  // Initial render
+  updateMainChart('weekly');
   renderDonutChart(byCategory);
 }
 
-function renderWeeklyChart(data) {
-  const ctx = document.getElementById('weekly-chart');
+function renderMainChart(data, period) {
+  const ctx = document.getElementById('main-chart');
   if (!ctx) return;
-  new Chart(ctx, {
+  return new Chart(ctx, {
     type: 'bar',
     data: {
-      labels: data.map(d => d.day),
+      labels: data.map(d => d.label),
       datasets: [{
         data: data.map(d => d.amount),
         backgroundColor: data.map((d, i) => {
@@ -170,7 +189,8 @@ function renderWeeklyChart(data) {
         }),
         borderRadius: 6,
         borderSkipped: false,
-        barThickness: 28
+        barThickness: period === 'daily' ? 'flex' : 28,
+        maxBarThickness: 32
       }]
     },
     options: {
@@ -179,7 +199,7 @@ function renderWeeklyChart(data) {
       plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => '$' + ctx.raw.toLocaleString() } } },
       scales: {
         y: { display: false, beginAtZero: true },
-        x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: 11, weight: '500' }, color: '#9CA3AF' }, border: { display: false } }
+        x: { grid: { display: false }, ticks: { font: { family: 'Inter', size: period === 'daily' ? 9 : 11, weight: '500' }, color: '#9CA3AF' }, border: { display: false } }
       }
     }
   });

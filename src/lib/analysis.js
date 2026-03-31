@@ -230,11 +230,12 @@ export function calculateProjections(movements) {
 export function getWeeklySpending(movements) {
   const now = new Date();
   const days = ['Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb', 'Dom'];
-  const result = days.map(d => ({ day: d, amount: 0 }));
+  const result = days.map(d => ({ label: d, amount: 0 }));
 
-  // Get current week's expenses
   const startOfWeek = new Date(now);
-  startOfWeek.setDate(now.getDate() - now.getDay() + 1); // Monday
+  const day = now.getDay();
+  const diff = now.getDate() - day + (day === 0 ? -6 : 1); // Adjust for Sunday
+  startOfWeek.setDate(diff);
   startOfWeek.setHours(0, 0, 0, 0);
 
   const expenses = movements.filter(m => {
@@ -245,8 +246,81 @@ export function getWeeklySpending(movements) {
   for (const exp of expenses) {
     const d = new Date(exp.fecha);
     let dayIdx = d.getDay() - 1;
-    if (dayIdx < 0) dayIdx = 6; // Sunday
-    result[dayIdx].amount += Number(exp.monto);
+    if (dayIdx < 0) dayIdx = 6;
+    if (result[dayIdx]) result[dayIdx].amount += Number(exp.monto);
+  }
+
+  return result;
+}
+
+/**
+ * Get daily spending for last 30 days
+ */
+export function getDailySpending(movements) {
+  const now = new Date();
+  const result = [];
+  
+  for (let i = 29; i >= 0; i--) {
+    const d = new Date(now);
+    d.setDate(now.getDate() - i);
+    d.setHours(0, 0, 0, 0);
+    result.push({ 
+      label: d.getDate().toString(), 
+      fullDate: d.toDateString(),
+      amount: 0 
+    });
+  }
+
+  const startDate = new Date(now);
+  startDate.setDate(now.getDate() - 29);
+  startDate.setHours(0, 0, 0, 0);
+
+  const expenses = movements.filter(m => {
+    const d = new Date(m.fecha);
+    return m.tipo === 'gasto' && d >= startDate;
+  });
+
+  for (const exp of expenses) {
+    const d = new Date(exp.fecha);
+    d.setHours(0, 0, 0, 0);
+    const item = result.find(r => r.fullDate === d.toDateString());
+    if (item) item.amount += Number(exp.monto);
+  }
+
+  return result;
+}
+
+/**
+ * Get monthly spending for last 12 months
+ */
+export function getMonthlySpending(movements) {
+  const now = new Date();
+  const result = [];
+  const monthNames = ['Ene', 'Feb', 'Mar', 'Abr', 'May', 'Jun', 'Jul', 'Ago', 'Sep', 'Oct', 'Nov', 'Dic'];
+
+  for (let i = 11; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    result.push({ 
+      label: monthNames[d.getMonth()],
+      month: d.getMonth(),
+      year: d.getFullYear(),
+      amount: 0 
+    });
+  }
+
+  const startDate = new Date(now.getFullYear(), now.getMonth() - 11, 1);
+
+  const expenses = movements.filter(m => {
+    const d = new Date(m.fecha);
+    return m.tipo === 'gasto' && d >= startDate;
+  });
+
+  for (const exp of expenses) {
+    const d = new Date(exp.fecha);
+    const m = d.getMonth();
+    const y = d.getFullYear();
+    const item = result.find(r => r.month === m && r.year === y);
+    if (item) item.amount += Number(exp.monto);
   }
 
   return result;
