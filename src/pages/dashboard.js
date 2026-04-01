@@ -92,6 +92,27 @@ export function renderDashboard(container) {
           </div>
         </div>
       </div>
+
+      <!-- Income vs Expenses Comparison -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">
+            <span class="icon" style="background:rgba(0,210,160,0.1);color:var(--accent-green)">⚖️</span> 
+            Ingresos vs Gastos
+          </span>
+        </div>
+        <div class="chart-container" style="height:250px;margin-bottom:12px">
+          <canvas id="comparison-chart"></canvas>
+        </div>
+        <div style="display:flex;justify-content:center;gap:20px;font-size:0.75rem;color:var(--text-muted)">
+          <div style="display:flex;align-items:center;gap:4px">
+            <div style="width:8px;height:8px;border-radius:2px;background:var(--accent-green)"></div> Ingresos
+          </div>
+          <div style="display:flex;align-items:center;gap:4px">
+            <div style="width:8px;height:8px;border-radius:2px;background:var(--accent-red)"></div> Gastos
+          </div>
+        </div>
+      </div>
     </div>
 
     <div class="dashboard-grid-bottom">
@@ -194,6 +215,55 @@ export function renderDashboard(container) {
   // Initial render
   updateMainChart('weekly');
   renderDonutChart(byCategory);
+  renderComparisonChart(summary.income, summary.expenses);
+}
+
+function renderComparisonChart(income, expenses) {
+  const ctx = document.getElementById('comparison-chart');
+  if (!ctx) return;
+  return new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: ['Este Mes'],
+      datasets: [
+        {
+          label: 'Ingresos',
+          data: [income],
+          backgroundColor: '#00D2A0',
+          borderRadius: 6,
+          barThickness: 40
+        },
+        {
+          label: 'Gastos',
+          data: [expenses],
+          backgroundColor: '#FF6B6B',
+          borderRadius: 6,
+          barThickness: 40
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { 
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ctx.dataset.label + ': $' + ctx.raw.toLocaleString() } }
+      },
+      scales: {
+        y: { 
+          beginAtZero: true,
+          grid: { color: 'rgba(229,231,235,0.4)', drawTicks: false },
+          ticks: { font: { size: 10 }, color: '#9CA3AF' },
+          border: { display: false }
+        },
+        x: { 
+          grid: { display: false },
+          ticks: { display: false },
+          border: { display: false }
+        }
+      }
+    }
+  });
 }
 
 function renderMainChart(data, period) {

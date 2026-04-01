@@ -391,14 +391,18 @@ a {
    ============================================ */
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
+  grid-template-columns: repeat(3, 1fr);
   gap: 20px;
   margin-bottom: 20px;
 }
 
+.ai-card {
+  grid-column: span 3;
+}
+
 .dashboard-grid-bottom {
   display: grid;
-  grid-template-columns: 1.2fr 0.8fr 1fr;
+  grid-template-columns: 1.2fr 1fr 1fr;
   gap: 20px;
 }
 
